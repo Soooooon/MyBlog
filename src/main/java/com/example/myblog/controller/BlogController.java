@@ -16,9 +16,9 @@ import java.util.List;
  * @version 2019/8/2
  */
 @Slf4j
-@CrossOrigin
+//@CrossOrigin
 @RestController
-@RequestMapping("/myblog")
+@RequestMapping("/api/article")
 public class BlogController {
 
     private BlogService blogService;
@@ -44,7 +44,7 @@ public class BlogController {
     }
 
 
-    @RequestMapping("/article/{id}")
+    @RequestMapping("/detail/{id}")
     public WebResult<Article> getArticle(@PathVariable("id") Long id){
         WebResult<Article> webResult=new WebResult<>(blogService.queryById(id));
         return webResult;
@@ -74,16 +74,16 @@ public class BlogController {
     }
 
 
-    @RequestMapping("/modify")
-    public WebResult<Integer> modifyArticle(@RequestBody Article article){
+    @RequestMapping("/edit")
+    public WebResult<Integer> modifyArticle(ArticleForm articleForm) throws Exception {
+        Article article=articleForm.update();
         WebResult<Integer> webResult=new WebResult<>(blogService.updateArticle(article));
         return webResult;
     }
 
 
     @RequestMapping("/create")
-    public Integer createNewArticle(@RequestBody ArticleForm articleForm){
-        // TODO: 这边数据解析有点问题
+    public Integer createNewArticle(ArticleForm articleForm){
         Article article=articleForm.create();
         return blogService.createArticle(article);
     }
