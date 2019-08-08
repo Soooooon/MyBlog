@@ -2,12 +2,13 @@ package com.example.myblog.controller;
 
 import com.example.myblog.entity.Article;
 import com.example.myblog.entity.base.WebResult;
+import com.example.myblog.enums.SortDirection;
 import com.example.myblog.service.BlogService;
+import com.github.pagehelper.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -50,27 +51,48 @@ public class BlogController {
     }
 
     @RequestMapping("/list")
-    public List<Article> getAllArticles(){
-        return blogService.queryAllArticles();
+    public WebResult<Page> list(
+            @RequestParam(defaultValue = "1") int pageNum,
+            @RequestParam(defaultValue = "20") int pageSize,
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String content,
+            @RequestParam(required = false) SortDirection articleId,
+            @RequestParam(required = false) SortDirection articleCreateTime,
+            @RequestParam(required = false) SortDirection articleRefreshTime
+    ){
+        Page<Article> page=blogService.list(pageNum, pageSize, title, content, articleId, articleCreateTime,
+                articleRefreshTime);
+
+        WebResult<Page> webResult=new WebResult<>(page);
+        return webResult;
     }
 
 
     @RequestMapping("/delete/{id}")
-    public Boolean deleteArticle(@PathVariable("id") Long id){
+    public Integer deleteArticle(@PathVariable("id") Long id){
         return blogService.deleteArticle(id);
     }
 
 
     @RequestMapping("/modify")
-    public WebResult<Boolean> modifyArticle(@RequestBody Article article){
-        WebResult<Boolean> webResult=new WebResult<>(blogService.updateArticle(article));
+    public WebResult<Integer> modifyArticle(@RequestBody Article article){
+        WebResult<Integer> webResult=new WebResult<>(blogService.updateArticle(article));
         return webResult;
     }
 
 
     @RequestMapping("/create")
-    public Boolean createNewArticle(HttpServletRequest request,@RequestBody Article article){
+    public Integer createNewArticle(@RequestBody ArticleForm articleForm){
+        // TODO: 这边数据解析有点问题
+        Article article=articleForm.create();
         return blogService.createArticle(article);
+    }
+
+    @RequestMapping("/queryall")
+    public WebResult<List<Article>> queryAll(){
+        List<Article> articles=blogService.queryAllArticles();
+        WebResult<List<Article>> webResult=new WebResult<>(articles);
+        return webResult;
     }
 
 }

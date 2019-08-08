@@ -1,11 +1,13 @@
-package com.example.myblog.dao;
+package com.example.myblog.mapper;
 
-import com.example.myblog.dao.base.BaseMapper;
+import com.example.myblog.mapper.base.BaseMapper;
 import com.example.myblog.entity.Article;
 import com.example.myblog.enums.SortDirection;
 import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * @author 礼敖
@@ -41,18 +43,17 @@ public interface ArticleMapper extends BaseMapper<Article> {
 //
 //    @Select("select * from t_article where id=#{id}")
 //    Article queryById(Long id);
-//
-//    @Select("select * from t_article")
-//    List<Article> queryAll();
 
     Page<Article> page(
             @Param("pageNum") int pageNum,
             @Param("pageSize") int pageSize,
-            @Param("articleCreateTime") SortDirection articleCreateTime,
-            @Param("articleRefreshTime") SortDirection articleRefreshTime,
-            @Param("articleId") SortDirection articleId,
             @Param("title") String title,
-            @Param("content") String content
+            @Param("content") String content,
+            @Param("articleId") SortDirection articleId,
+            @Param("articleCreateTime") SortDirection articleCreateTime,
+            @Param("articleRefreshTime") SortDirection articleRefreshTime
     );
 
+
+    List<Article> queryAll();
 }

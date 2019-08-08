@@ -1,13 +1,13 @@
 package com.example.myblog.service.impl;
 
-import com.example.myblog.dao.ArticleMapper;
+import com.example.myblog.mapper.ArticleMapper;
 import com.example.myblog.entity.Article;
+import com.example.myblog.enums.SortDirection;
 import com.example.myblog.service.BlogService;
+import com.github.pagehelper.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.xml.crypto.Data;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -19,40 +19,39 @@ public class BlogServiceImpl implements BlogService {
 
     private ArticleMapper articleMapper;
 
-    @Autowired
+    @Autowired(required = false)
     public BlogServiceImpl(ArticleMapper articleMapper){
         this.articleMapper=articleMapper;
     }
 
     @Override
-    public Boolean deleteArticle(Long id) {
+    public Integer deleteArticle(Long id) {
         return articleMapper.deleteById(id);
     }
 
     @Override
-    public Boolean updateArticle(Article article) {
-        Long id=article.getId();
-        String title=article.getTitle();
-        String content=article.getContent();
-        Date createTime=article.getCreateTime()==null?new Date():article.getCreateTime();
-        Date refreshTime=article.getRefreshTime()==null?new Date():article.getRefreshTime();
-        return articleMapper.update(id,title,content,createTime,refreshTime);
+    public Integer updateArticle(Article article) {
+        return articleMapper.update(article);
     }
 
     @Override
-    public Boolean createArticle(Article article) {
-        String author=article.getAuthor();
-        String title=article.getTitle();
-        String content=article.getContent();
-        Date createTime=article.getCreateTime();
-        Date refreshTime=article.getRefreshTime();
-        return articleMapper.insert(author, title, content,createTime,refreshTime);
+    public Integer createArticle(Article article) {
+        return articleMapper.insert(article);
     }
 
     @Override
     public Article queryById(Long id) {
-        return articleMapper.queryById(id);
+        return articleMapper.selectById(id);
     }
+
+    @Override
+    public Page<Article> list(int pageNum, int pageSize, String title, String content, SortDirection articleId, SortDirection articleCreateTime, SortDirection articleRefreshTime) {
+        Page<Article> page=articleMapper.page(pageNum, pageSize, title, content, articleId, articleCreateTime,
+                articleRefreshTime);
+
+        return page;
+    }
+
 
     @Override
     public List<Article> queryAllArticles() {

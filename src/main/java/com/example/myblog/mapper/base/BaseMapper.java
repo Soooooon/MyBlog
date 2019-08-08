@@ -1,4 +1,4 @@
-package com.example.myblog.dao.base;
+package com.example.myblog.mapper.base;
 
 /**
  * @author 礼敖
